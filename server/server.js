@@ -27,7 +27,7 @@ app.post('', async (req, res) => {
     try {
         const prompt = req.body.prompt
 
-        const res = await openai.createCompletion({
+        const response = await openai.createCompletion({
             model: "text-davinci-003",
             prompt: `${prompt}`,
             temperature: 0,
@@ -38,7 +38,7 @@ app.post('', async (req, res) => {
         })
         
         res.status(200).send({
-            bot: res.data.choices[0].text
+            bot: response.data.choices[0].text
         })
     } catch (err) {
         console.error(err)

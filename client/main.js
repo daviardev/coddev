@@ -35,7 +35,7 @@ const typeText = (element, text) => {
 
     const interval = setInterval(() => {
         if (index < text.length) {
-            element.innerHTML += text.chartAt(index)
+            element.innerHTML += text.charAt(index)
             index++
         } else {
             clearInterval(interval)
@@ -93,6 +93,34 @@ const handleSubmit = async e => {
 
     const messageDiv = __(uniqueId)
     loader(messageDiv)
+
+    // Obtener datos a la respuesta del bot
+    const res = await fetch('http://localhost:5000/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            prompt: data.get('prompt')
+        })
+    })
+
+    // Una vez termine la respuesta al bot, detiene el punto del mensaje
+    clearInterval(loadInterval)
+    messageDiv.innerHTML = ''
+
+    if (res.ok) {
+        const data = await res.json()
+        const parsedData = data.bot.trim()
+
+        typeText(messageDiv, parsedData)
+    } else {
+        const err = await res.text()
+
+        messageDiv.innerHTML = 'Algo está pasando.'
+
+        window.alert(err)
+    }
 }
 
 // Escuchar evento
